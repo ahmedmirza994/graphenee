@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.github.appreciated.app.layout.component.appbar.IconButton;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
@@ -15,6 +16,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -60,6 +62,10 @@ public abstract class GxAbstractEntityForm<T> extends VerticalLayout {
 
 	@Setter
 	private Boolean dialogAutoClose = true;
+
+	private Boolean isFullScreen = false;
+
+	private IconButton fullScreenButton = null;
 
 	public GxAbstractEntityForm(Class<T> entityClass) {
 		this.entityClass = entityClass;
@@ -188,7 +194,23 @@ public abstract class GxAbstractEntityForm<T> extends VerticalLayout {
 			formTitleLayout.getStyle().set("padding-left", "0.5em");
 			formTitleLayout.getStyle().set("padding-top", "0.5em");
 			formTitleLayout.setWidthFull();
-			formTitleLayout.add(formTitleLabel);
+
+			fullScreenButton = new IconButton(VaadinIcon.EXPAND.create());
+
+			fullScreenButton.addClickListener(event -> {
+				if (isFullScreen) {
+					isFullScreen = false;
+					fullScreenButton.setIcon(VaadinIcon.EXPAND.create());
+					dialog.setHeight(dialogHeight());
+					dialog.setWidth(dialogWidth());
+				} else {
+					isFullScreen = true;
+					fullScreenButton.setIcon(VaadinIcon.MINUS.create());
+					dialog.setSizeFull();
+				}
+			});
+
+			formTitleLayout.add(formTitleLabel, fullScreenButton);
 			addComponentAsFirst(formTitleLayout);
 		}
 	}
